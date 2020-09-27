@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ScrapingChallenge.Application.Scrape.Commands;
 using ScrapingChallenge.Application.Scrape.Services;
+using ScrapingChallenge.Exceptions;
 
 namespace ScrapingChallenge
 {
@@ -21,7 +22,7 @@ namespace ScrapingChallenge
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(options => { options.Filters.Add<GlobalExceptionFilter>(); });
 
             services.AddMediatR(typeof(Startup).Assembly, typeof(ScrapeMenuCommandHandler).Assembly);
             services.AddScoped<IScrapingService, ScrapingService>();
