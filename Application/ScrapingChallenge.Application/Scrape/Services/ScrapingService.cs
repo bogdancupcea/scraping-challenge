@@ -41,7 +41,7 @@ namespace ScrapingChallenge.Application.Scrape.Services
             var linksCount = menuLinks.Count;
             Log($"Found {linksCount} menu items.");
 
-            for (int i = 1; i <= 2; i++)
+            for (int i = 1; i <= linksCount; i++)
             {
                 var menuLink = driver.FindElementByCssSelector($".nav .submenu li:nth-child({i}) a");
                 if (menuLink == null) continue;

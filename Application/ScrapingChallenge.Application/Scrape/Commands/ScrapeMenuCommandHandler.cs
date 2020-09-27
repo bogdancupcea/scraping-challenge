@@ -36,7 +36,7 @@ namespace ScrapingChallenge.Application.Scrape.Commands
                     {
                         MenuTitle = item.Title,
                         MenuDescription = item.Description,
-                        MenuSectionTitle = section.Title,
+                        MenuSectionTitle = section.Title.Contains("Section") ? string.Empty : section.Title,
                         DishName = dish.Name,
                         DishDescription = dish.Description
                     }));
