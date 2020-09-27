@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -19,15 +20,24 @@ namespace ScrapingChallenge.Application.Scrape.Commands
         public async Task<IEnumerable<MenuItemModel>> Handle(ScrapeMenuCommand request, CancellationToken cancellationToken)
         {
             var menuItems = await _scrapingService.Scrape(request.MenuUrl);
+            var models = new List<MenuItemModel>();
 
-            return new List<MenuItemModel>()
+            foreach (var item in menuItems)
             {
-                new MenuItemModel
+                foreach (var section in item.Sections)
                 {
-                    MenuTitle = "test",
-                    MenuDescription = "testdesc"
+                    models.AddRange(section.Dishes.Select(dish => new MenuItemModel
+                    {
+                        MenuTitle = item.Title,
+                        MenuDescription = item.Description,
+                        MenuSectionTitle = section.Title,
+                        DishName = dish.Name,
+                        DishDescription = dish.Description
+                    }));
                 }
-            };
+            }
+
+            return models;
         }
     }
 }
