@@ -8,6 +8,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["ScrapingChallenge.csproj", ""]
+COPY ["../Infrastructure/ScrapingChallenge.Infrastructure/ScrapingChallenge.Infrastructure.csproj", "../Infrastructure/ScrapingChallenge.Infrastructure/"]
+COPY ["../Domain/ScrapingChallenge.Domain/ScrapingChallenge.Domain.csproj", "../Domain/ScrapingChallenge.Domain/"]
+COPY ["../Application/ScrapingChallenge.Application/ScrapingChallenge.Application.csproj", "../Application/ScrapingChallenge.Application/"]
 RUN dotnet restore "./ScrapingChallenge.csproj"
 COPY . .
 WORKDIR "/src/."

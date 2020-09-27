@@ -6,6 +6,6 @@ namespace ScrapingChallenge.Application.Scrape.Services
 {
     public interface IScrapingService
     {
-        Task<IEnumerable<MenuItem>> Scrape(string url);
+        IEnumerable<MenuItem> Scrape(string url);
     }
 }

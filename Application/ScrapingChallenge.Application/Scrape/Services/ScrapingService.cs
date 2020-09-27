@@ -21,13 +21,13 @@ namespace ScrapingChallenge.Application.Scrape.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<MenuItem>> Scrape(string url)
+        public IEnumerable<MenuItem> Scrape(string url)
         {
             Log("Starting scraping...");
 
             var menuItems = new List<MenuItem>();
 
-            var driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            using var driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(20);
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(10);
             driver.Manage().Window.Maximize();
@@ -41,7 +41,7 @@ namespace ScrapingChallenge.Application.Scrape.Services
             var linksCount = menuLinks.Count;
             Log($"Found {linksCount} menu items.");
 
-            for (int i = 1; i <= linksCount; i++)
+            for (int i = 1; i <= 2; i++)
             {
                 var menuLink = driver.FindElementByCssSelector($".nav .submenu li:nth-child({i}) a");
                 if (menuLink == null) continue;
@@ -53,7 +53,7 @@ namespace ScrapingChallenge.Application.Scrape.Services
                 menuLink.Click();
 
                 var menuDescription = driver.FindElementByCssSelector(".main-content .menu-header p");
-                item.Description = menuDescription?.Text; //todo remove html
+                item.Description = menuDescription?.Text;
 
                 var sectionHeaders = driver.FindElementsByCssSelector(".main-content h4.menu-title");
                 item.Sections = new List<Section>();
@@ -71,9 +71,12 @@ namespace ScrapingChallenge.Application.Scrape.Services
 
                         if(string.IsNullOrEmpty(dishesDivId)) continue;
 
+                        var title = link.FindElement(By.TagName("span"))?.Text;
+                        if (string.IsNullOrEmpty(title))
+                            title = $"{item.Title}-Section_{j}";
                         var section = new Section
                         {
-                            Title = link.FindElement(By.TagName("span"))?.Text, 
+                            Title = title, 
                             Dishes = new List<Dish>()
                         };
 
@@ -91,6 +94,7 @@ namespace ScrapingChallenge.Application.Scrape.Services
                     Log($"Item \"{item.Title}\" has only 1 section.");
                     var section = new Section
                     {
+                        Title = $"{item.Title}-Section",
                         Dishes = new List<Dish>()
                     };
 
